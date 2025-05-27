@@ -1,109 +1,91 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Kiểm tra Tự luận Kế toán</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body { background-color: #f8f9fa; padding-top: 40px; }
-    .card { margin-top: 20px; }
-    textarea { resize: vertical; }
-  </style>
+    <meta charset="UTF-8">
+    <title>Kiểm tra Tự luận Kế toán</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; max-width: 800px; }
+        textarea { width: 100%; height: 150px; }
+        button { padding: 10px 20px; margin-top: 10px; }
+        .hidden { display: none; }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h2 class="text-center mb-4">📝 Bài kiểm tra Tự luận – Kế toán THPT</h2>
+    <h2>📘 Câu hỏi <span id="soCau"></span>:</h2>
+    <p id="cauHoi"></p>
 
-    <div class="card shadow">
-      <div class="card-header bg-primary text-white">
-        Câu hỏi <span id="soCau"></span>
-      </div>
-      <div class="card-body">
-        <p id="cauHoi" class="fw-semibold"></p>
-        <label for="traLoi" class="form-label">✍️ Nhập câu trả lời của bạn:</label>
-        <textarea id="traLoi" class="form-control" rows="5"></textarea>
-        <div class="mt-3">
-          <button class="btn btn-success" onclick="kiemTra()">Kiểm tra</button>
-          <button class="btn btn-secondary d-none" id="btnTiep" onclick="cauTiepTheo()">Câu tiếp theo</button>
-        </div>
-      </div>
-    </div>
+    <h3>✍️ Trả lời của bạn:</h3>
+    <textarea id="traLoi"></textarea><br>
+    <button onclick="kiemTra()">Kiểm tra</button>
 
-    <div id="ketQuaCard" class="card shadow mt-3 d-none">
-      <div class="card-body">
-        <h5 class="card-title">📊 Kết quả:</h5>
-        <p id="ketQua" class="card-text"></p>
-      </div>
-    </div>
-  </div>
+    <h3>📊 Kết quả:</h3>
+    <p id="ketQua"></p>
 
-  <script>
-    const boDe = [
-      {
-        cauHoi: "Phân biệt tài sản ngắn hạn và tài sản dài hạn trong kế toán.",
-        dapAn: "Tài sản ngắn hạn là tài sản có thời gian sử dụng hoặc thu hồi trong vòng một năm. Tài sản dài hạn là tài sản có thời gian sử dụng hoặc thu hồi trên một năm."
-      },
-      {
-        cauHoi: "Trình bày khái niệm và vai trò của bảng cân đối kế toán.",
-        dapAn: "Bảng cân đối kế toán là báo cáo tài chính phản ánh tình hình tài sản, nợ phải trả và vốn chủ sở hữu của doanh nghiệp tại một thời điểm. Nó giúp đánh giá khả năng tài chính và cấu trúc tài sản của doanh nghiệp."
-      },
-      {
-        cauHoi: "Chi phí sản xuất gồm những yếu tố nào?",
-        dapAn: "Chi phí sản xuất gồm nguyên vật liệu trực tiếp, nhân công trực tiếp và chi phí sản xuất chung."
-      },
-      {
-        cauHoi: "Trình bày nguyên tắc ghi sổ kép trong kế toán.",
-        dapAn: "Nguyên tắc ghi sổ kép yêu cầu mỗi nghiệp vụ kinh tế phải được ghi nhận vào ít nhất hai tài khoản: một tài khoản ghi Nợ và một tài khoản ghi Có, với tổng số tiền Nợ bằng tổng số tiền Có."
-      }
-    ];
+    <button onclick="cauTiepTheo()" id="btnTiep" class="hidden">Tiếp tục</button>
 
-    let chiSo = 0;
+    <script>
+        const boDe = [
+            {
+                cauHoi: "Tính tổng 2+2=.",
+                dapAn: "4"
+            },
+            {
+                cauHoi: "Tính 4+2*3=.",
+                dapAn: "10"
+            },
+            {
+                cauHoi: "Tính 100:2=",
+                dapAn: "50"
+            },
+            {
+                cauHoi: "Tính 4^2=.",
+                dapAn: "16"
+            }
+        ];
 
-    function hienThiCauHoi() {
-      document.getElementById("traLoi").value = "";
-      document.getElementById("ketQua").innerText = "";
-      document.getElementById("btnTiep").classList.add("d-none");
-document.getElementById("ketQuaCard").classList.add("d-none");
+        let chiSo = 0;
 
-      if (chiSo < boDe.length) {
-        document.getElementById("soCau").innerText = `${chiSo + 1} / ${boDe.length}`;
-        document.getElementById("cauHoi").innerText = boDe[chiSo].cauHoi;
-      } else {
-        document.querySelector(".container").innerHTML = `
-          <div class="alert alert-success text-center" role="alert">
-            🎉 Bạn đã hoàn thành bài kiểm tra! Chúc mừng!
-          </div>`;
-      }
-    }
+        function hienThiCauHoi() {
+            document.getElementById("traLoi").value = "";
+            document.getElementById("ketQua").innerText = "";
+            document.getElementById("btnTiep").classList.add("hidden");
 
-    function tinhDoGiong(str1, str2) {
-      const word1 = str1.toLowerCase().split(/\W+/);
-      const word2 = str2.toLowerCase().split(/\W+/);
-      const giong = word1.filter(w => word2.includes(w));
-      return giong.length / Math.max(word1.length, word2.length);
-    }
+            if (chiSo < boDe.length) {
+                document.getElementById("soCau").innerText = (chiSo + 1) + "/" + boDe.length;
+                document.getElementById("cauHoi").innerText = boDe[chiSo].cauHoi;
+            } else {
+                document.body.innerHTML = "<h2>🎉 Bạn đã hoàn thành bài kiểm tra!</h2>";
+            }
+        }
 
-    function kiemTra() {
-      const traLoi = document.getElementById("traLoi").value;
-      const dapAn = boDe[chiSo].dapAn;
-      const doGiong = tinhDoGiong(traLoi, dapAn);
-      let danhGia = "";
+        function tinhDoGiong(str1, str2) {
+            const word1 = str1.toLowerCase().split(/\W+/);
+const word2 = str2.toLowerCase().split(/\W+/);
+            const giong = word1.filter(w => word2.includes(w));
+            return giong.length / Math.max(word1.length, word2.length);
+        }
 
-      if (doGiong > 0.8) danhGia = `<span class="text-success fw-bold">✅ Đúng!</span>`;
-      else if (doGiong > 0.5) danhGia = `<span class="text-warning fw-bold">🟡 Gần đúng.</span> Bạn nên bổ sung thêm nội dung.`;
-      else danhGia = `<span class="text-danger fw-bold">❌ Sai.</span> Gợi ý đáp án: <em></em>`;
+        function kiemTra() {
+            const traLoi = document.getElementById("traLoi").value;
+            const dapAn = boDe[chiSo].dapAn;
+            const doGiong = tinhDoGiong(traLoi, dapAn);
+            let danhGia = "";
 
-      document.getElementById("ketQua").innerHTML = danhGia;
-      document.getElementById("btnTiep").classList.remove("d-none");
-      document.getElementById("ketQuaCard").classList.remove("d-none");
-    }
+            if (doGiong > 0.8) danhGia = "✅ Đúng!";
+            else if (doGiong > 0.5) danhGia = "🟡 Gần đúng. Bạn cần bổ sung.";
+            else danhGia = "❌ Sai.  " ;
 
-    function cauTiepTheo() {
-      chiSo++;
-      hienThiCauHoi();
-    }
+            document.getElementById("ketQua").innerText = danhGia;
+            document.getElementById("btnTiep").classList.remove("hidden");
+        }
 
-    hienThiCauHoi();
-  </script>
+        function cauTiepTheo() {
+            chiSo++;
+            hienThiCauHoi();
+        }
+
+        // Bắt đầu
+        hienThiCauHoi();
+    </script>
 </body>
 </html>
